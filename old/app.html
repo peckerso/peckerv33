@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PECKER | AllBridge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --background-color: #0f0f0f;
+            --card-bg-color: #1a1a1a;
+            --accent-color: #836ef9;
+            --text-color: #ffffff;
+            --secondary-text: #b0b0b0;
+            --border-color: #2a2a2a;
+            --hover-color: #2c2c2c;
+            --notification-color: #1e3a8a;
+            --button-color: #836ef9;
+            --button-hover: #9d8dfc;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Styles */
+        header {
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-svg {
+            height: 32px;
+            width: auto;
+            margin-right: 0.75rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 1.5rem;
+            margin-right: 2rem;
+        }
+
+        .nav-item {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--text-color);
+            background-color: var(--hover-color);
+        }
+
+        .nav-item.active {
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-button {
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .wallet-button:hover {
+            background-color: var(--hover-color);
+        }
+
+        /* Content Styles */
+        .main-content {
+            padding: 2rem;
+        }
+
+        .tab-header {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            color: var(--text-color);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--card-bg-color);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--secondary-text);
+        }
+
+        .form-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #262626;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .token-selector {
+            position: absolute;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .token-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .token-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .token-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 240px;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            z-index: 10;
+            display: none;
+        }
+
+        .token-dropdown.show {
+            display: block;
+        }
+
+        .token-list {
+            list-style: none;
+        }
+
+        .token-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .token-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .token-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .token-symbol {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .token-address {
+            font-size: 0.75rem;
+            color: var(--secondary-text);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--button-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Transaction Details */
+        .transaction-details {
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-label {
+            color: var(--secondary-text);
+            font-size: 0.875rem;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .token-balance {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .balance-label {
+            font-size: 0.875rem;
+            color: var(--secondary-text);
+        }
+
+        .balance-value {
+            font-size: 0.875rem;
+        }
+
+        .notification {
+            background-color: rgba(131, 110, 249, 0.1);
+            border-left: 3px solid var(--accent-color);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .notification-message {
+            color: var(--text-color);
+            font-size: 0.875rem;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--text-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg-color);
+            border-radius: 12px;
+            width: 450px;
+            max-width: 90%;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .network-list {
+            list-style: none;
+        }
+
+        .network-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .network-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .network-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .network-name {
+            font-weight: 500;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <svg class="logo-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 9.5L8.5 16.5" stroke="#836ef9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8.5 9.5L15.5 16.5" stroke="#836ef9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="8.5" stroke="#836ef9" stroke-width="1.5"/>
+            </svg>
+            <h1 class="logo-text">PECKER</h1>
+        </div>
+        <div class="nav-container">
+            <nav class="main-nav">
+                <a href="#" class="nav-item active">Swap</a>
+                <a href="#" class="nav-item">Pool</a>
+                <a href="#" class="nav-item">Earn</a>
+                <a href="#" class="nav-item">Analytics</a>
+            </nav>
+            <div class="user-info">
+                <button id="connect-wallet" class="wallet-button">
+                    <span id="wallet-status">Connect</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <div class="tab-header">
+                <button class="tab-button active" data-tab="swap">Swap</button>
+                <button class="tab-button" data-tab="pool">Pool</button>
+            </div>
+
+            <!-- Swap Tab -->
+            <div id="swap-tab" class="tab-content active">
+                <div class="card">
+                    <div class="notification">
+                        <p class="notification-message">Make sure you are connected to Monad Testnet.</p>
+                        <p class="notification-message">Note: During transactions, MetaMask may ask for token spending approval (approve). This is a normal operation that gives the contract permission to spend tokens.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="token-balance">
+                            <span class="balance-label">Send</span>
+                            <span class="balance-value">Balance: <span id="from-token-balance">0</span></span>
+                        </div>
+                        <div class="form-input-wrapper">
+                            <input type="number" id="from-amount" class="form-input" placeholder="0.0">
+                            <div class="token-selector" id="from-token-selector">
+                                <img id="from-token-icon" src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" class="token-icon">
+                                <span id="from-token-name" class="token-name">Select</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="token-dropdown" id="from-token-dropdown">
+                                <ul class="token-list" id="from-token-list">
+                                    <!-- Token list will be populated by JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="token-balance">
+                            <span class="balance-label">Receive</span>
+                            <span class="balance-value">Balance: <span id="to-token-balance">0</span></span>
+                        </div>
+                        <div class="form-input-wrapper">
+                            <input type="number" id="to-amount" class="form-input" placeholder="0.0" readonly>
+                            <div class="token-selector" id="to-token-selector">
+                                <img id="to-token-icon" src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" class="token-icon">
+                                <span id="to-token-name" class="token-name">Select</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="token-dropdown" id="to-token-dropdown">
+                                <ul class="token-list" id="to-token-list">
+                                    <!-- Token list will be populated by JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Estimated Gas</span>
+                            <span class="detail-value" id="gas-estimate-value">~0.0002 MON</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Minimum Received</span>
+                            <span class="detail-value" id="min-receive-value">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Price Impact</span>
+                            <span class="detail-value" id="price-impact-value">0.00%</span>
+                        </div>
+                    </div>
+
+                    <button id="swap-button" class="btn btn-primary" disabled>
+                        Connecting Wallet...
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pool Tab -->
+            <div id="pool-tab" class="tab-content">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="card-title">Deposit to Pool</h2>
+                        <div class="form-group">
+                            <label class="form-label">Select Pool</label>
+                            <div class="form-input-wrapper">
+                                <select id="deposit-pool-select" class="form-input">
+                                    <option value="" disabled selected>Select pool</option>
+                                    <!-- Pool options will be added by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="token-balance">
+                                <span class="balance-label">Amount</span>
+                                <span class="balance-value">Balance: <span id="deposit-token-balance">0</span></span>
+                            </div>
+                            <div class="form-input-wrapper">
+                                <input type="number" id="deposit-amount" class="form-input" placeholder="0.0">
+                            </div>
+                        </div>
+
+                        <button id="deposit-button" class="btn btn-primary" disabled>
+                            Connecting Wallet...
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Withdraw from Pool</h2>
+                        <div class="form-group">
+                            <label class="form-label">Select Pool</label>
+                            <div class="form-input-wrapper">
+                                <select id="withdraw-pool-select" class="form-input">
+                                    <option value="" disabled selected>Select pool</option>
+                                    <!-- Pool options will be added by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="token-balance">
+                                <span class="balance-label">Amount</span>
+                                <span class="balance-value">Deposited: <span id="withdraw-token-balance">0</span></span>
+                            </div>
+                            <div class="form-input-wrapper">
+                                <input type="number" id="withdraw-amount" class="form-input" placeholder="0.0">
+                            </div>
+                        </div>
+
+                        <button id="withdraw-button" class="btn btn-primary" disabled>
+                            Connecting Wallet...
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network Modal -->
+    <div id="network-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Switch Network</h2>
+                <button class="modal-close" id="close-network-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ul class="network-list">
+                    <li class="network-item" data-chain-id="10143">
+                        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" class="network-icon">
+                        <span class="network-name">Monad Testnet</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="./src/app.js"></script>
+</body>
+</html> 

@@ -1,0 +1,6 @@
+name = "pecker-app"
+compatibility_date = "2024-03-27"
+workers_dev = false
+
+[site]
+bucket = "./"
